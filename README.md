@@ -14,42 +14,72 @@ This utility parses a standard cron string and outputs a table with the expanded
 It supports standard cron features including:
 - Wildcards (`*`)
 - Ranges (`1-5`)
-- Steps (`*/15`, `1-5/2`)
-- Lists (`1,15`)
+# Cron Expression Parser
 
-## Prerequisites
+A small command-line utility that parses a standard cron string (5 fields) and expands each field to show the times at which it will run.
 
-- Node.js installed on your system.
+**Features**
+- Expands the five standard cron fields: `minute`, `hour`, `day of month`, `month`, `day of week`.
+- Supports wildcards (`*`), ranges (`1-5`), steps (`*/15`, `1-5/2`) and lists (`1,15`).
+- Prints the output in a simple aligned table with the field name in the first 14 columns.
 
-## Installation
+**Note:** This project intentionally avoids using third-party cron parsing libraries (assignment requirement).
 
-1. Clone the repository or download the source code.
-2. Navigate to the project directory.
-3. Make the script executable (optional, for Linux/macOS):
-   ```bash
-   chmod +x cron-parser.js
-   ```
+**Prerequisites**
+- Node.js (recommended: `>=18`).
 
-## Usage
+**Quick install**
+1. Clone the repository:
 
-You can run the parser using `node`:
+```bash
+git clone <repo-url>
+cd cron-parser
+```
+
+2. (Optional) Install dependencies (there are none required for runtime, but this is safe):
+
+```bash
+npm install
+```
+
+3. (Optional) Make the script executable and/or install it locally as a CLI:
+
+```bash
+chmod +x cron-parser.js
+npm link      # installs `cron-parser` command globally for testing
+```
+
+**Usage**
+
+Run with `node`:
 
 ```bash
 node cron-parser.js "*/15 0 1,15 * 1-5 /usr/bin/find"
 ```
 
-Or if you made it executable:
+Or (after `npm link`) as a CLI:
 
 ```bash
-./cron-parser.js "*/15 0 1,15 * 1-5 /usr/bin/find"
+cron-parser "*/15 0 1,15 * 1-5 /usr/bin/find"
 ```
 
-## Output Format
+Shell quoting tip: wrap the whole cron expression and command in single or double quotes so the shell doesn't interpret special characters. Example with single quotes:
 
-The output is formatted as a table with the field name taking the first 14 columns and the times as a space-separated list following it.
-
-Example output:
+```bash
+cron-parser '*/15 0 1,15 * 1-5 /usr/bin/find'
 ```
+
+**Examples**
+
+Input:
+
+```text
+*/15 0 1,15 * 1-5 /usr/bin/find
+```
+
+Output:
+
+```text
 minute         0 15 30 45
 hour           0
 day of month   1 15
@@ -58,10 +88,31 @@ day of week    1 2 3 4 5
 command        /usr/bin/find
 ```
 
-## Running Tests
+**Limitations / Scope**
+- Only the standard five cron fields are supported (no `@yearly` / `@daily` special strings).
+- Named months/days (e.g., `JAN`, `MON`) are not supported.
+- Day-of-week currently uses `0-6` where `0` is Sunday; `7` is not normalized to `0` (could be added later).
+- Input validation is basic — malformed numbers may produce errors or be ignored; improved validation would provide clearer errors.
 
-To run the included test suite:
+If you plan to extend behavior (e.g., accept `7` for Sunday, named values, or timezone-aware parsing), add tests in `test.js` and implement the changes in `cron-parser.js`.
+
+**Running tests**
+
+This repository includes a small test harness. Run the tests with:
 
 ```bash
+npm test
+# or
 node test.js
 ```
+
+**Developer notes**
+- Main implementation: `cron-parser.js`.
+- Tests: `test.js` (simple assertions exercising example and edge cases).
+- CI: you can add a GitHub Actions workflow to run `npm test` on push/PR.
+
+**Contributing**
+- Open an issue or submit a PR for bug fixes or features. Keep changes small and add tests.
+
+**License**
+- This project uses the `ISC` license. See `LICENSE` for details.
