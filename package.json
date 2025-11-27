@@ -1,0 +1,14 @@
+{
+  "name": "cron-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cron-parser.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "author": "Akash",
+  "license": "ISC",
+  "bin": {
+    "cron-parser": "./cron-parser.js"
+  }
+}
